@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+html{overflow-y:scroll;height:100%}
+body{min-height:100%}
 :root{
   --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
   --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
@@ -17,7 +19,8 @@
 }
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
 .layout{display:flex;min-height:100vh}
-.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
 .logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
 .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
 .nav{display:flex;flex-direction:column;gap:2px;flex:1}
@@ -111,9 +114,24 @@ tr:last-child td{border-bottom:none}
 .heat-0{background:#F8FAFC;color:var(--text-muted)} .heat-1{background:#DBEAFE;color:#1E40AF}
 .heat-2{background:#93C5FD;color:#1E3A8A} .heat-3{background:#3B82F6;color:#fff}
 .heat-4{background:#1D4ED8;color:#fff} .heat-5{background:#1E3A8A;color:#fff}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:1000;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:.2s}
+.theme-toggle:hover{transform:scale(1.1)}
+.theme-toggle svg{width:18px;height:18px;stroke:var(--text-sec);fill:none}
+[data-theme="dark"]{--bg:#0F172A;--card:#1E293B;--text:#F1F5F9;--text-sec:#94A3B8;--text-muted:#64748B;--border:#334155;--primary-light:#1E3A5F;--shadow:0 1px 3px rgba(0,0,0,.3);--success-bg:#052e16;--warning-bg:#422006;--danger-bg:#450a0a;--ozon-bg:#001a4d;--wb-bg:#3d0533;--ym-bg:#4d1408}
+.card{transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.profit-detail{display:none;background:var(--bg);border-radius:8px;padding:10px 14px;margin-top:6px;font-size:11px;color:var(--text-sec)}
+.profit-detail.show{display:block}
+.profit-pct{font-size:11px;padding:2px 6px;border-radius:4px;margin-left:6px}
+.profit-pct.good{background:var(--success-bg);color:var(--success)}
+.profit-pct.mid{background:var(--warning-bg);color:var(--warning)}
 </style>
 </head>
 <body>
+<button class="theme-toggle" onclick="let d=document.documentElement,t=d.getAttribute('data-theme')==='dark'?'':'dark';d.setAttribute('data-theme',t);this.querySelector('.sun').style.display=t?'block':'none';this.querySelector('.moon').style.display=t?'none':'block'" title="Переключить тему">
+  <svg class="moon" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+  <svg class="sun" viewBox="0 0 24 24" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
 <div class="layout">
   <aside class="sidebar">
     <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
@@ -133,6 +151,9 @@ tr:last-child td{border-bottom:none}
       <a href="videos.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
       <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
       <a href="pricing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Управление</div>
+      <a href="employees.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Сотрудники</span><span class="nav-badge" style="background:var(--primary)">6</span></a>
     </nav>
     <div class="sidebar-footer"><div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div></div>
   </aside>
@@ -279,6 +300,12 @@ tr:last-child td{border-bottom:none}
               <button class="sort-tab" onclick="this.parentElement.querySelector('.active').classList.remove('active');this.classList.add('active')">По прибыли</button>
             </div>
           </div>
+          <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+            <button style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--primary);background:var(--primary-light);color:var(--primary);cursor:pointer;font-family:inherit">Все МП</button>
+            <button style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer;font-family:inherit">Ozon</button>
+            <button style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer;font-family:inherit">Wildberries</button>
+            <button style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:none;color:var(--text-sec);cursor:pointer;font-family:inherit">Yandex Market</button>
+          </div>
           <table>
             <thead><tr><th>#</th><th>Товар</th><th>МП</th><th>Продажи</th><th>Выручка</th><th>Прибыль</th></tr></thead>
             <tbody>
@@ -288,7 +315,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-ozon">Ozon</span></td>
                 <td>142</td>
                 <td class="amount">4 684 580 ₽</td>
-                <td class="amount" style="color:var(--success)">702 690 ₽</td>
+                <td class="amount" style="color:var(--success)">702 690 ₽ <span class="profit-pct mid">15%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">2</td>
@@ -296,7 +323,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-ym">YM</span></td>
                 <td>218</td>
                 <td class="amount">3 267 820 ₽</td>
-                <td class="amount" style="color:var(--success)">392 140 ₽</td>
+                <td class="amount" style="color:var(--success)">392 140 ₽ <span class="profit-pct mid">12%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">3</td>
@@ -304,7 +331,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-ozon">Ozon</span></td>
                 <td>97</td>
                 <td class="amount">2 424 030 ₽</td>
-                <td class="amount" style="color:var(--success)">436 330 ₽</td>
+                <td class="amount" style="color:var(--success)">436 330 ₽ <span class="profit-pct good">18%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">4</td>
@@ -312,7 +339,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-wb">WB</span></td>
                 <td>184</td>
                 <td class="amount">2 371 760 ₽</td>
-                <td class="amount" style="color:var(--success)">592 940 ₽</td>
+                <td class="amount" style="color:var(--success)">592 940 ₽ <span class="profit-pct good">25%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">5</td>
@@ -320,7 +347,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-ozon">Ozon</span></td>
                 <td>247</td>
                 <td class="amount">2 097 030 ₽</td>
-                <td class="amount" style="color:var(--success)">461 350 ₽</td>
+                <td class="amount" style="color:var(--success)">461 350 ₽ <span class="profit-pct good">22%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">6</td>
@@ -328,7 +355,7 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-wb">WB</span></td>
                 <td>156</td>
                 <td class="amount">2 118 440 ₽</td>
-                <td class="amount" style="color:var(--success)">423 690 ₽</td>
+                <td class="amount" style="color:var(--success)">423 690 ₽ <span class="profit-pct good">20%</span></td>
               </tr>
               <tr>
                 <td style="color:var(--text-muted)">7</td>
@@ -336,10 +363,25 @@ tr:last-child td{border-bottom:none}
                 <td><span class="badge b-ym">YM</span></td>
                 <td>312</td>
                 <td class="amount">1 243 880 ₽</td>
-                <td class="amount" style="color:var(--success)">211 460 ₽</td>
+                <td class="amount" style="color:var(--success)">211 460 ₽ <span class="profit-pct mid">17%</span></td>
               </tr>
             </tbody>
           </table>
+          <div style="background:var(--bg);border-radius:10px;padding:14px;margin-top:12px;font-size:12px">
+            <div style="font-weight:600;margin-bottom:8px;color:var(--text-sec)">Структура себестоимости — Фен Dyson Supersonic (1 шт.)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div>Закупка: <b>28 000 ₽</b></div>
+              <div>Комиссия МП: <b>1 640 ₽</b></div>
+              <div>Логистика: <b>890 ₽</b></div>
+              <div>Упаковка: <b>245 ₽</b></div>
+              <div>Хранение: <b>180 ₽</b></div>
+              <div>Итого расход: <b>30 955 ₽</b></div>
+            </div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between">
+              <span style="font-weight:600;color:var(--success)">Чистая прибыль с единицы: 2 045 ₽ (6.2%)</span>
+              <span style="color:var(--text-muted)">Цена продажи: 33 000 ₽</span>
+            </div>
+          </div>
           <button class="view-all-btn" onclick="window.location.href='product-analytics.html'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             Посмотреть все товары

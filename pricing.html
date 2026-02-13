@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+html{overflow-y:scroll;height:100%}
+body{min-height:100%}
 :root{
   --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
   --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
@@ -20,7 +22,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .layout{display:flex;min-height:100vh}
 
 /* Sidebar */
-.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
 .logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
 .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
 .nav{display:flex;flex-direction:column;gap:2px;flex:1}
@@ -200,9 +203,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .faq-item.open .faq-q svg{transform:rotate(180deg)}
 .faq-a{padding:0 18px 14px;font-size:13px;color:var(--text-sec);line-height:1.6;display:none}
 .faq-item.open .faq-a{display:block}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:1000;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:.2s}
+.theme-toggle:hover{transform:scale(1.1)}
+.theme-toggle svg{width:18px;height:18px;stroke:var(--text-sec);fill:none}
+[data-theme="dark"]{--bg:#0F172A;--card:#1E293B;--text:#F1F5F9;--text-sec:#94A3B8;--text-muted:#64748B;--border:#334155;--primary-light:#1E3A5F;--shadow:0 1px 3px rgba(0,0,0,.3);--success-bg:#052e16;--warning-bg:#422006;--danger-bg:#450a0a;--ozon-bg:#001a4d;--wb-bg:#3d0533;--ym-bg:#4d1408}
+.card{transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
 </style>
 </head>
 <body>
+<button class="theme-toggle" onclick="let d=document.documentElement,t=d.getAttribute('data-theme')==='dark'?'':'dark';d.setAttribute('data-theme',t);this.querySelector('.sun').style.display=t?'block':'none';this.querySelector('.moon').style.display=t?'none':'block'" title="Переключить тему">
+  <svg class="moon" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+  <svg class="sun" viewBox="0 0 24 24" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
 <div class="layout">
   <aside class="sidebar">
     <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
@@ -222,6 +235,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       <a href="videos.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
       <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
       <a href="pricing.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Управление</div>
+      <a href="employees.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Сотрудники</span><span class="nav-badge" style="background:var(--primary)">6</span></a>
     </nav>
     <div class="sidebar-footer"><div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div></div>
   </aside>
