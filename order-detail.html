@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SellerHub — Заказ #YM-384920</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
+  --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
+  --ozon:#005BFF;--ozon-bg:#EBF3FF;--wb:#CB11AB;--wb-bg:#FCE7F6;
+  --ym:#FC3F1D;--ym-bg:#FFF1EE;--success:#22C55E;--success-bg:#F0FDF4;
+  --warning:#F59E0B;--warning-bg:#FFFBEB;--danger:#EF4444;--danger-bg:#FEF2F2;
+  --r:12px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--text-sec);text-decoration:none;font-size:14px;font-weight:500;transition:.15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--primary-light);color:var(--primary)}
+.nav-item svg{width:20px;height:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+.nav-badge.ai{background:linear-gradient(135deg,#7C3AED,#4F6AF6);font-size:10px}
+.nav-divider{height:1px;background:var(--border);margin:8px 12px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 12px 4px;font-weight:600}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px}
+.user-block{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px}
+.user-avatar{width:36px;height:36px;background:linear-gradient(135deg,#a78bfa,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+.user-info .name{font-size:14px;font-weight:600}
+.user-info .role{font-size:12px;color:var(--text-muted)}
+.main{margin-left:260px;flex:1;min-height:100vh}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:var(--card);border-bottom:1px solid var(--border)}
+.header-left{display:flex;align-items:center;gap:16px}
+.back-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-sec);text-decoration:none}
+.header-right{display:flex;align-items:center;gap:10px}
+.btn{height:36px;padding:0 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-sec)}
+.btn-success{background:var(--success);color:#fff}
+.content{padding:32px}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
+.b-ym{background:var(--ym-bg);color:var(--ym)}
+.scheme{display:inline-flex;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:.3px;margin-left:8px}
+.s-fby{background:#FEE2E2;color:#DC2626}
+.status-big{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600}
+.status-big::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor}
+.st-process-big{background:#FFF7ED;color:#F97316}
+
+/* Grid layout */
+.detail-grid{display:grid;grid-template-columns:1fr 380px;gap:24px}
+.card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
+.card:last-child{margin-bottom:0}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:18px;height:18px;color:var(--text-sec)}
+
+/* Products */
+.product-row{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);align-items:center}
+.product-row:last-child{border-bottom:none}
+.product-img{width:72px;height:72px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:11px;text-align:center;flex-shrink:0}
+.product-info{flex:1}
+.product-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.product-sku{font-size:12px;color:var(--text-muted)}
+.product-price{text-align:right}
+.product-price .price{font-size:16px;font-weight:700}
+.product-price .qty{font-size:12px;color:var(--text-muted)}
+
+/* Finance table */
+.fin-table{width:100%;border-collapse:collapse}
+.fin-table td{padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.fin-table tr:last-child td{border-bottom:none}
+.fin-table .label{color:var(--text-sec)}
+.fin-table .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.fin-table .total td{font-size:16px;font-weight:700;border-top:2px solid var(--text);padding-top:14px}
+.fin-table .profit td{color:var(--success)}
+.fin-table .loss td{color:var(--danger)}
+
+/* Video block */
+.video-block{background:#0F172A;border-radius:12px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);position:relative;overflow:hidden}
+.video-block .play-btn{width:64px;height:64px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);margin-bottom:12px}
+.video-block .play-btn svg{color:#fff;margin-left:4px}
+.video-block .video-label{font-size:13px;color:rgba(255,255,255,.6)}
+.video-block .video-time{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.6);padding:2px 8px;border-radius:4px;font-size:11px;color:#fff}
+.video-block .video-bar{position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,.1)}
+.video-block .video-bar-fill{height:100%;width:65%;background:var(--primary);border-radius:0 2px 2px 0}
+
+/* Timeline */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:24px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-28px;top:2px;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center}
+.timeline-dot.done{border-color:var(--success);background:var(--success-bg)}
+.timeline-dot.done::after{content:'✓';font-size:11px;color:var(--success);font-weight:700}
+.timeline-dot.active{border-color:var(--primary);background:var(--primary-light)}
+.timeline-dot.active::after{content:'';width:8px;height:8px;background:var(--primary);border-radius:50%}
+.timeline-dot.pending{border-color:var(--border);background:#F8FAFC}
+.timeline-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.timeline-desc{font-size:12px;color:var(--text-muted)}
+.timeline-time{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* Info blocks */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info-item .info-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px}
+.info-item .info-value{font-size:14px;font-weight:500}
+
+/* Breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted)}
+.breadcrumb a{color:var(--text-sec);text-decoration:none}
+.breadcrumb a:hover{color:var(--primary)}
+.breadcrumb .sep{color:var(--border)}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
+    <nav class="nav">
+      <div class="nav-section">Основное</div>
+      <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+      <a href="orders.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Заказы</span><span class="nav-badge">12</span></a>
+      <a href="product-create.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Создание карточки</span><span class="nav-badge ai">AI</span></a>
+      <a href="stock.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Остатки</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Аналитика</div>
+      <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Продажи</span></a>
+      <a href="product-analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><span>Товарная аналитика</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Операции</div>
+      <a href="accounting.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Бухгалтерия</span></a>
+      <a href="videos.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
+      <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
+      <a href="pricing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="header">
+      <div class="header-left">
+        <a href="orders.html" class="back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <div>
+          <div class="breadcrumb">
+            <a href="orders.html">Заказы</a>
+            <span class="sep">/</span>
+            <span>#YM-384920</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+            <h1 style="font-size:22px;font-weight:700">Заказ #YM-384920</h1>
+            <span class="badge b-ym">Yandex Market</span>
+            <span class="scheme s-fby">FBY</span>
+            <span class="status-big st-process-big">В обработке</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          Заметка
+        </button>
+        <button class="btn btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Печать
+        </button>
+        <button class="btn btn-success">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Подтвердить
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="detail-grid">
+        <!-- Left column -->
+        <div>
+          <!-- Products -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+              Товары
+            </div>
+            <div class="product-row">
+              <div class="product-img">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+              <div class="product-info">
+                <div class="product-name">Смартфон Xiaomi Redmi Note 13 Pro 8/256GB</div>
+                <div class="product-sku">SKU: XMI-RN13P-256 · Артикул МП: 948271635</div>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <span style="font-size:11px;padding:2px 8px;background:#F1F5F9;border-radius:4px;color:var(--text-sec)">Чёрный</span>
+                  <span style="font-size:11px;padding:2px 8px;background:#F1F5F9;border-radius:4px;color:var(--text-sec)">256 ГБ</span>
+                </div>
+              </div>
+              <div class="product-price">
+                <div class="price">14 990 ₽</div>
+                <div class="qty">× 1 шт.</div>
+              </div>
+            </div>
+            <div class="product-row">
+              <div class="product-img">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+              <div class="product-info">
+                <div class="product-name">Чехол Nillkin для Redmi Note 13 Pro</div>
+                <div class="product-sku">SKU: NLK-RN13-BK · Артикул МП: 948271699</div>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <span style="font-size:11px;padding:2px 8px;background:#F1F5F9;border-radius:4px;color:var(--text-sec)">Чёрный матовый</span>
+                </div>
+              </div>
+              <div class="product-price">
+                <div class="price">890 ₽</div>
+                <div class="qty">× 1 шт.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finance -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              Финансовый расклад
+            </div>
+            <table class="fin-table">
+              <tr><td class="label">Стоимость товаров</td><td class="val">15 880 ₽</td></tr>
+              <tr><td class="label">Скидка продавца</td><td class="val" style="color:var(--danger)">−890 ₽</td></tr>
+              <tr><td class="label">Покупатель заплатил</td><td class="val">14 990 ₽</td></tr>
+              <tr style="height:8px"><td colspan="2"></td></tr>
+              <tr><td class="label">Комиссия Yandex Market (8%)</td><td class="val" style="color:var(--danger)">−1 199 ₽</td></tr>
+              <tr><td class="label">Логистика (FBY, склад → ПВЗ)</td><td class="val" style="color:var(--danger)">−245 ₽</td></tr>
+              <tr><td class="label">Хранение на складе (12 дней)</td><td class="val" style="color:var(--danger)">−84 ₽</td></tr>
+              <tr><td class="label">Эквайринг (1.5%)</td><td class="val" style="color:var(--danger)">−225 ₽</td></tr>
+              <tr><td class="label">Продвижение (буст)</td><td class="val" style="color:var(--danger)">−150 ₽</td></tr>
+              <tr style="height:8px"><td colspan="2"></td></tr>
+              <tr><td class="label">Себестоимость товаров</td><td class="val" style="color:var(--danger)">−8 240 ₽</td></tr>
+              <tr><td class="label">Упаковка</td><td class="val" style="color:var(--danger)">−65 ₽</td></tr>
+              <tr class="total profit"><td>Чистая прибыль</td><td class="val">4 782 ₽</td></tr>
+            </table>
+            <div style="display:flex;gap:16px;margin-top:16px">
+              <div style="flex:1;background:var(--success-bg);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-size:12px;color:var(--text-muted)">Маржинальность</div>
+                <div style="font-size:20px;font-weight:700;color:var(--success)">31.9%</div>
+              </div>
+              <div style="flex:1;background:var(--primary-light);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-size:12px;color:var(--text-muted)">ROI</div>
+                <div style="font-size:20px;font-weight:700;color:var(--primary)">57.5%</div>
+              </div>
+              <div style="flex:1;background:var(--warning-bg);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-size:12px;color:var(--text-muted)">Комиссии</div>
+                <div style="font-size:20px;font-weight:700;color:var(--warning)">12.7%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Packing video -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              Видео упаковки
+            </div>
+            <div class="video-block">
+              <div class="play-btn">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="video-label">packing_YM-384920_20260213.mp4</div>
+              <div class="video-time">01:24 / 02:10</div>
+              <div class="video-bar"><div class="video-bar-fill"></div></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:12px;font-size:12px;color:var(--text-muted)">
+              <span>Записано: 13 фев 2026, 08:42</span>
+              <span>·</span>
+              <span>Сотрудник: Дмитрий К.</span>
+              <span>·</span>
+              <span>Камера: Упаковка-3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Customer info -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Покупатель
+            </div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Имя</div>
+                <div class="info-value">Козлов Дмитрий А.</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Город</div>
+                <div class="info-value">Екатеринбург</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">ПВЗ</div>
+                <div class="info-value">ул. Ленина, 42</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Заказов</div>
+                <div class="info-value">17 заказов</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery info -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              Доставка
+            </div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Схема</div>
+                <div class="info-value" style="display:flex;align-items:center;gap:8px">FBY <span style="font-size:11px;padding:2px 8px;background:var(--ym-bg);border-radius:4px;color:var(--ym)">Склад Яндекса</span></div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Трек-номер</div>
+                <div class="info-value" style="color:var(--primary)">YM-7849201384920</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Плановая дата</div>
+                <div class="info-value">15 фев 2026</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Вес</div>
+                <div class="info-value">0.42 кг</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              История движения
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-title">Заказ создан на Yandex Market</div>
+                <div class="timeline-desc">Покупатель оформил заказ, ожидает подтверждения</div>
+                <div class="timeline-time">13 фев 2026, 09:15</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-title">Подтверждён продавцом</div>
+                <div class="timeline-desc">Автоматическое подтверждение (настройка: авто-принятие FBY)</div>
+                <div class="timeline-time">13 фев 2026, 09:15</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-title">Резерв на складе Яндекса</div>
+                <div class="timeline-desc">Товар зарезервирован: Склад Софьино, ячейка R12-A4</div>
+                <div class="timeline-time">13 фев 2026, 09:18</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot active"></div>
+                <div class="timeline-title">Комплектация</div>
+                <div class="timeline-desc">Сборка заказа на складе Яндекс Market</div>
+                <div class="timeline-time">13 фев 2026, 10:30</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">Упаковка и маркировка</div>
+                <div class="timeline-desc">Нанесение этикетки, проверка комплектности</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">Передан в доставку</div>
+                <div class="timeline-desc">Передача курьерской службе Яндекс</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">Сортировочный центр</div>
+                <div class="timeline-desc">СЦ Екатеринбург</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">В пути к ПВЗ</div>
+                <div class="timeline-desc">ПВЗ: ул. Ленина, 42</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">Прибыл в ПВЗ</div>
+                <div class="timeline-desc">Ожидает получения покупателем</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-title">Получен покупателем</div>
+                <div class="timeline-desc">Заказ завершён</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

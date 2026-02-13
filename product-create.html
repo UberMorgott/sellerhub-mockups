@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SellerHub — Создание карточки</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
+  --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
+  --ozon:#005BFF;--ozon-bg:#EBF3FF;--wb:#CB11AB;--wb-bg:#FCE7F6;
+  --ym:#FC3F1D;--ym-bg:#FFF1EE;--success:#22C55E;--success-bg:#F0FDF4;
+  --warning:#F59E0B;--warning-bg:#FFFBEB;--danger:#EF4444;--danger-bg:#FEF2F2;
+  --violet:#7C3AED;--violet-bg:#F5F3FF;
+  --r:12px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.layout{display:flex;min-height:100vh}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Sidebar */
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--text-sec);text-decoration:none;font-size:14px;font-weight:500;transition:.15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--primary-light);color:var(--primary)}
+.nav-item svg{width:20px;height:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+.nav-badge.ai{background:linear-gradient(135deg,#7C3AED,#4F6AF6);font-size:10px}
+.nav-divider{height:1px;background:var(--border);margin:8px 12px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 12px 4px;font-weight:600}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px}
+.user-block{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px}
+.user-avatar{width:36px;height:36px;background:linear-gradient(135deg,#a78bfa,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+.user-info .name{font-size:14px;font-weight:600}
+.user-info .role{font-size:12px;color:var(--text-muted)}
+
+.main{margin-left:260px;flex:1;min-height:100vh}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:var(--card);border-bottom:1px solid var(--border)}
+.header h1{font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px}
+.ai-badge{background:linear-gradient(135deg,#7C3AED,#4F6AF6);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;display:flex;align-items:center;gap:4px}
+.content{padding:32px}
+.card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:18px;height:18px;color:var(--text-sec)}
+.btn{height:36px;padding:0 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-sec)}
+.btn-success{background:var(--success);color:#fff}
+.btn-violet{background:var(--violet);color:#fff}
+
+/* Layout */
+.create-grid{display:grid;grid-template-columns:1fr 400px;gap:24px}
+
+/* Steps indicator */
+.steps{display:flex;gap:4px;margin-bottom:28px}
+.step{flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--card);border:1px solid var(--border)}
+.step.done{background:var(--success-bg);border-color:transparent}
+.step.active{background:var(--primary-light);border-color:var(--primary)}
+.step.pending{opacity:.5}
+.step-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step.done .step-num{background:var(--success);color:#fff}
+.step.active .step-num{background:var(--primary);color:#fff}
+.step.pending .step-num{background:var(--bg);color:var(--text-muted)}
+.step-text{font-size:12px;font-weight:600}
+.step-text .sub{font-weight:400;color:var(--text-sec)}
+.step.done .step-text{color:var(--success)}
+.step.active .step-text{color:var(--primary)}
+
+/* Upload zone */
+.upload-zone{border:2px dashed var(--border);border-radius:16px;padding:32px;text-align:center;background:#FAFBFC;transition:.2s}
+.upload-zone.has-image{border:2px solid var(--success);background:var(--success-bg);padding:16px}
+.upload-preview{display:flex;gap:16px;align-items:flex-start;text-align:left}
+.upload-img{width:160px;height:160px;border-radius:12px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.upload-img.loaded{background:#1E293B}
+.upload-img .placeholder{color:var(--text-muted);font-size:12px;text-align:center;padding:16px}
+.upload-img .shoe-icon{font-size:64px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.1))}
+.upload-result{flex:1}
+
+/* AI Recognition block */
+.ai-result{background:var(--violet-bg);border:1px solid #DDD6FE;border-radius:12px;padding:16px;margin-top:12px}
+.ai-result-header{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--violet);margin-bottom:10px}
+.ai-result-header svg{width:16px;height:16px}
+.ai-tag{display:inline-flex;align-items:center;padding:4px 10px;background:#fff;border-radius:6px;font-size:12px;font-weight:500;margin:2px;border:1px solid #DDD6FE}
+.ai-confidence{font-size:11px;color:var(--violet);font-weight:600;margin-left:4px}
+
+/* Generated fields */
+.field-group{margin-bottom:16px}
+.field-label{font-size:12px;font-weight:600;color:var(--text-sec);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.field-label .ai-gen{font-size:10px;padding:1px 6px;background:var(--violet-bg);color:var(--violet);border-radius:4px;font-weight:600}
+.field-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;color:var(--text);outline:none}
+.field-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,106,246,.1)}
+textarea.field-input{resize:vertical;min-height:80px}
+.field-input.ai-filled{border-color:#DDD6FE;background:#FAFBFF}
+
+/* Marketplace publish cards */
+.mp-publish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mp-publish{border-radius:12px;border:1px solid var(--border);padding:16px;position:relative;overflow:hidden}
+.mp-publish-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mp-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.mp-icon.ozon{background:var(--ozon)} .mp-icon.wb{background:var(--wb)} .mp-icon.ym{background:var(--ym)}
+.mp-name{font-size:14px;font-weight:600;margin-left:10px;flex:1}
+
+/* Progress bar */
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;border-radius:3px;transition:.3s}
+.progress-fill.success{background:var(--success)}
+.progress-fill.warning{background:var(--warning)}
+.progress-fill.active{background:var(--primary);animation:shimmer 1.5s infinite;background-size:200% 100%;background-image:linear-gradient(90deg,var(--primary) 0%,#818CF8 50%,var(--primary) 100%)}
+
+/* Status steps mini */
+.mp-steps{display:flex;flex-direction:column;gap:6px}
+.mp-step{display:flex;align-items:center;gap:8px;font-size:12px}
+.mp-step-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px}
+.mp-step-dot.done{background:var(--success-bg);color:var(--success)}
+.mp-step-dot.active{background:var(--primary-light);color:var(--primary)}
+.mp-step-dot.pending{background:var(--bg);color:var(--text-muted)}
+.mp-step-dot.error{background:var(--danger-bg);color:var(--danger)}
+.mp-step-dot.fix{background:var(--warning-bg);color:var(--warning)}
+
+/* Moderation result */
+.mod-result{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:12px}
+.mod-result.approved{background:var(--success-bg);color:#166534}
+.mod-result.fixing{background:var(--warning-bg);color:#92400E}
+.mod-result.pending{background:var(--primary-light);color:#3730A3}
+.mod-link{color:var(--primary);text-decoration:none;font-weight:500;font-size:12px;display:inline-flex;align-items:center;gap:4px;margin-top:8px}
+
+/* Learning section */
+.learning-card{background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid #DDD6FE;border-radius:12px;padding:20px}
+.learning-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.learning-icon{width:36px;height:36px;background:linear-gradient(135deg,#7C3AED,#4F6AF6);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.learning-stat{display:flex;gap:16px;margin-top:12px}
+.learning-stat-item{flex:1;background:#fff;border-radius:8px;padding:10px;text-align:center}
+.learning-stat-item .val{font-size:18px;font-weight:700;color:var(--violet)}
+.learning-stat-item .lbl{font-size:11px;color:var(--text-muted)}
+
+/* Clarification dialog */
+.clarify{background:var(--warning-bg);border:1px solid #FDE68A;border-radius:12px;padding:16px;margin-top:16px}
+.clarify-header{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#92400E;margin-bottom:10px}
+.clarify-options{display:flex;gap:8px;flex-wrap:wrap}
+.clarify-option{padding:8px 14px;border-radius:8px;border:1px solid #FDE68A;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:var(--text)}
+.clarify-option:hover{border-color:var(--warning)}
+.clarify-option.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600}
+
+/* Error auto-fix */
+.autofix{background:var(--danger-bg);border:1px solid #FECACA;border-radius:10px;padding:12px;margin-top:8px}
+.autofix-header{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#991B1B;margin-bottom:6px}
+.autofix-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0}
+.autofix-item .before{text-decoration:line-through;color:var(--danger)}
+.autofix-item .after{color:var(--success);font-weight:500}
+.autofix-item .arrow{color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
+    <nav class="nav">
+      <div class="nav-section">Основное</div>
+      <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+      <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Заказы</span><span class="nav-badge">12</span></a>
+      <a href="product-create.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Создание карточки</span><span class="nav-badge ai">AI</span></a>
+      <a href="stock.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Остатки</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Аналитика</div>
+      <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Продажи</span></a>
+      <a href="product-analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><span>Товарная аналитика</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Операции</div>
+      <a href="accounting.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Бухгалтерия</span></a>
+      <a href="videos.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
+      <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
+      <a href="pricing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>
+          Создание карточки
+          <span class="ai-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            AI Auto
+          </span>
+        </h1>
+        <div style="font-size:13px;color:var(--text-sec);margin-top:4px">Сфотографируй товар — AI создаст карточки на всех площадках</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline">История создания</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step done">
+          <div class="step-num">✓</div>
+          <div class="step-text">Фото<br><span class="sub">Загружено</span></div>
+        </div>
+        <div class="step done">
+          <div class="step-num">✓</div>
+          <div class="step-text">Распознавание<br><span class="sub">AI определил товар</span></div>
+        </div>
+        <div class="step done">
+          <div class="step-num">✓</div>
+          <div class="step-text">Генерация<br><span class="sub">Карточки созданы</span></div>
+        </div>
+        <div class="step active">
+          <div class="step-num">4</div>
+          <div class="step-text">Публикация<br><span class="sub">2 из 3 площадок</span></div>
+        </div>
+        <div class="step pending">
+          <div class="step-num">5</div>
+          <div class="step-text">Модерация<br><span class="sub">Ожидание</span></div>
+        </div>
+      </div>
+
+      <div class="create-grid">
+        <!-- Left column -->
+        <div>
+          <!-- Photo & AI Recognition -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Загрузка и распознавание
+            </div>
+            <div class="upload-zone has-image">
+              <div class="upload-preview">
+                <div class="upload-img loaded">
+                  <div class="shoe-icon" style="font-size:48px;color:#fff;opacity:.8">👟</div>
+                </div>
+                <div class="upload-result">
+                  <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">IMG_20260213_084521.jpg · 4.2 MB · iPhone 15 Pro</div>
+                  <div style="font-size:18px;font-weight:700;margin-bottom:8px">Nike Air Max 90</div>
+                  <div class="ai-result">
+                    <div class="ai-result-header">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                      AI распознал товар
+                    </div>
+                    <div>
+                      <span class="ai-tag">Обувь <span class="ai-confidence">99%</span></span>
+                      <span class="ai-tag">Nike <span class="ai-confidence">97%</span></span>
+                      <span class="ai-tag">Air Max 90 <span class="ai-confidence">94%</span></span>
+                      <span class="ai-tag">Белый/Серый <span class="ai-confidence">96%</span></span>
+                      <span class="ai-tag">Кроссовки <span class="ai-confidence">98%</span></span>
+                    </div>
+                    <div style="margin-top:8px;font-size:11px;color:var(--violet)">
+                      Найдено на маркетплейсах: 1 247 карточек · Средняя цена: 8 290–12 490 ₽
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clarification -->
+            <div class="clarify">
+              <div class="clarify-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                AI уточняет: какой размерный ряд?
+              </div>
+              <div class="clarify-options">
+                <button class="clarify-option selected">36–45 (полный)</button>
+                <button class="clarify-option">39–44 (мужской)</button>
+                <button class="clarify-option">36–41 (женский)</button>
+                <button class="clarify-option">Указать вручную</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generated product data -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Сгенерированные данные
+              <span style="margin-left:auto;font-size:11px;color:var(--violet);font-weight:500">AI заполнил 14 из 16 полей</span>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Название <span class="ai-gen">AI</span></div>
+              <input class="field-input ai-filled" value="Кроссовки Nike Air Max 90 мужские/женские, белый/серый, размеры 36-45">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Описание <span class="ai-gen">AI</span></div>
+              <textarea class="field-input ai-filled">Оригинальные кроссовки Nike Air Max 90 — культовая модель с видимой воздушной подушкой Air в пятке. Верх из комбинации кожи и текстиля. Рифлёная подошва из вафельной резины обеспечивает отличное сцепление. Подходит для повседневной носки и активного отдыха.
+
+• Материал верха: натуральная кожа, синтетика, текстиль
+• Подошва: резина с технологией Air Max
+• Цвет: белый/серый (White/Wolf Grey)
+• Производство: Вьетнам
+• Артикул: CN8490-100</textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="field-group">
+                <div class="field-label">Категория <span class="ai-gen">AI</span></div>
+                <input class="field-input ai-filled" value="Обувь → Кроссовки → Мужские">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Бренд <span class="ai-gen">AI</span></div>
+                <input class="field-input ai-filled" value="Nike">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Цена</div>
+                <input class="field-input" value="8 490 ₽" style="font-weight:700">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Себестоимость</div>
+                <input class="field-input" value="3 200 ₽">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Штрихкод <span class="ai-gen">AI</span></div>
+                <input class="field-input ai-filled" value="4607183290352">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Вес <span class="ai-gen">AI</span></div>
+                <input class="field-input ai-filled" value="0.85 кг (с коробкой)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Marketplace Publishing -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Публикация на площадках
+              <span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--success);font-weight:500"><span style="width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse 2s infinite"></span>Realtime</span>
+            </div>
+            <div class="mp-publish-grid">
+              <!-- Ozon -->
+              <div class="mp-publish">
+                <div class="mp-publish-header">
+                  <div style="display:flex;align-items:center">
+                    <div class="mp-icon ozon">Oz</div>
+                    <div class="mp-name">Ozon</div>
+                  </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill success" style="width:100%"></div></div>
+                <div class="mp-steps">
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Карточка создана</span></div>
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Фото загружены (4 шт)</span></div>
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Атрибуты заполнены</span></div>
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Модерация пройдена</span></div>
+                </div>
+                <div class="mod-result approved">
+                  ✓ Карточка одобрена и опубликована
+                </div>
+                <a href="#" class="mod-link">
+                  Посмотреть на Ozon →
+                </a>
+              </div>
+
+              <!-- Wildberries -->
+              <div class="mp-publish">
+                <div class="mp-publish-header">
+                  <div style="display:flex;align-items:center">
+                    <div class="mp-icon wb">WB</div>
+                    <div class="mp-name">Wildberries</div>
+                  </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill warning" style="width:75%"></div></div>
+                <div class="mp-steps">
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Карточка создана</span></div>
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Фото загружены (4 шт)</span></div>
+                  <div class="mp-step"><div class="mp-step-dot error">!</div><span style="color:var(--danger)">Ошибка модерации</span></div>
+                  <div class="mp-step"><div class="mp-step-dot fix">↻</div><span style="color:var(--warning)">Автоисправление...</span></div>
+                </div>
+                <div class="autofix">
+                  <div class="autofix-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                    AI автоисправление (из 47 похожих ошибок)
+                  </div>
+                  <div class="autofix-item">
+                    <span class="before">Кроссовки Nike Air Max</span>
+                    <span class="arrow">→</span>
+                    <span class="after">Кроссовки мужские Nike Air Max 90 CN8490</span>
+                  </div>
+                  <div class="autofix-item">
+                    <span class="before">Категория: Обувь/Кроссовки</span>
+                    <span class="arrow">→</span>
+                    <span class="after">Обувь/Кроссовки и кеды/Кроссовки</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Yandex Market -->
+              <div class="mp-publish">
+                <div class="mp-publish-header">
+                  <div style="display:flex;align-items:center">
+                    <div class="mp-icon ym">YM</div>
+                    <div class="mp-name">Yandex Market</div>
+                  </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill active" style="width:60%"></div></div>
+                <div class="mp-steps">
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Карточка создана</span></div>
+                  <div class="mp-step"><div class="mp-step-dot done">✓</div><span>Фото загружены (4 шт)</span></div>
+                  <div class="mp-step"><div class="mp-step-dot active" style="font-size:8px">●</div><span style="color:var(--primary)">На модерации...</span></div>
+                  <div class="mp-step"><div class="mp-step-dot pending">○</div><span style="color:var(--text-muted)">Ожидание публикации</span></div>
+                </div>
+                <div class="mod-result pending">
+                  ⏳ На модерации (обычно 15–30 мин)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Self-learning -->
+          <div class="learning-card" style="margin-bottom:24px">
+            <div class="learning-header">
+              <div class="learning-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--violet)">Самообучение AI</div>
+                <div style="font-size:12px;color:var(--text-sec)">На основе ваших 284 карточек</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-sec);line-height:1.6">
+              AI запомнил ваши паттерны и автоматически применил:
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;background:#fff;border-radius:6px">
+                <span style="color:var(--success)">✓</span>
+                Ваш шаблон названия для обуви Nike
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;background:#fff;border-radius:6px">
+                <span style="color:var(--success)">✓</span>
+                Маппинг категории WB (из 12 ошибок)
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;background:#fff;border-radius:6px">
+                <span style="color:var(--success)">✓</span>
+                SEO-ключевики: 8 из конкурентов
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;background:#fff;border-radius:6px">
+                <span style="color:var(--success)">✓</span>
+                Оптимальная цена: 8 490 ₽ (анализ 1 247 карт.)
+              </div>
+            </div>
+            <div class="learning-stat">
+              <div class="learning-stat-item">
+                <div class="val">284</div>
+                <div class="lbl">карточек создано</div>
+              </div>
+              <div class="learning-stat-item">
+                <div class="val">94%</div>
+                <div class="lbl">модерация с 1 раза</div>
+              </div>
+              <div class="learning-stat-item">
+                <div class="val">47</div>
+                <div class="lbl">ошибок изучено</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price comparison from parsing -->
+          <div class="card">
+            <div class="card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              Анализ цен конкурентов
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="width:20px;height:20px;background:var(--ozon);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">Oz</span>
+                  <span style="font-size:13px">Ozon</span>
+                </div>
+                <div style="font-size:13px;font-weight:600">7 890 — 12 490 ₽</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="width:20px;height:20px;background:var(--wb);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">WB</span>
+                  <span style="font-size:13px">Wildberries</span>
+                </div>
+                <div style="font-size:13px;font-weight:600">8 290 — 11 990 ₽</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="width:20px;height:20px;background:var(--ym);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">YM</span>
+                  <span style="font-size:13px">Yandex Market</span>
+                </div>
+                <div style="font-size:13px;font-weight:600">8 490 — 13 100 ₽</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:var(--success-bg);border-radius:8px;font-size:12px;color:#166534">
+              💡 Ваша цена 8 490 ₽ — в нижней трети рынка. Оптимально для быстрого старта продаж.
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="card">
+            <div class="card-title">Превью карточки</div>
+            <div style="background:var(--bg);border-radius:10px;padding:16px">
+              <div style="width:100%;aspect-ratio:1;background:#1E293B;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+                <span style="font-size:64px">👟</span>
+              </div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">Кроссовки Nike Air Max 90 мужские/женские</div>
+              <div style="font-size:18px;font-weight:700;color:var(--primary);margin-bottom:4px">8 490 ₽</div>
+              <div style="display:flex;gap:4px">
+                <span style="font-size:10px;padding:2px 6px;background:var(--success-bg);color:var(--success);border-radius:4px;font-weight:600">★ 4.8</span>
+                <span style="font-size:10px;padding:2px 6px;background:var(--bg);color:var(--text-muted);border-radius:4px">247 отзывов</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

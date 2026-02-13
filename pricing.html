@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SellerHub — Тарифы и оплата</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
+  --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
+  --ozon:#005BFF;--ozon-bg:#EBF3FF;--wb:#CB11AB;--wb-bg:#FCE7F6;
+  --ym:#FC3F1D;--ym-bg:#FFF1EE;--success:#22C55E;--success-bg:#F0FDF4;
+  --warning:#F59E0B;--warning-bg:#FFFBEB;--danger:#EF4444;--danger-bg:#FEF2F2;
+  --violet:#7C3AED;--violet-bg:#F5F3FF;
+  --r:12px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.layout{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--text-sec);text-decoration:none;font-size:14px;font-weight:500;transition:.15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--primary-light);color:var(--primary)}
+.nav-item svg{width:20px;height:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+.nav-badge.ai{background:linear-gradient(135deg,#7C3AED,#4F6AF6);font-size:10px}
+.nav-divider{height:1px;background:var(--border);margin:8px 12px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 12px 4px;font-weight:600}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px}
+.user-block{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px}
+.user-avatar{width:36px;height:36px;background:linear-gradient(135deg,#a78bfa,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+.user-info .name{font-size:14px;font-weight:600}
+.user-info .role{font-size:12px;color:var(--text-muted)}
+
+.main{margin-left:260px;flex:1;min-height:100vh}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:var(--card);border-bottom:1px solid var(--border)}
+.header h1{font-size:22px;font-weight:700}
+.content{padding:32px}
+.card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:24px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:18px;height:18px;color:var(--text-sec)}
+
+/* Current plan banner */
+.current-plan{background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:16px;padding:24px 32px;color:#fff;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between}
+.current-plan-info h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.current-plan-info p{font-size:14px;opacity:.85}
+.current-plan-right{text-align:right}
+.current-plan-price{font-size:32px;font-weight:800}
+.current-plan-period{font-size:13px;opacity:.75}
+.current-plan-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-top:8px}
+
+/* Period toggle */
+.period-toggle{display:flex;justify-content:center;margin-bottom:28px}
+.period-group{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px}
+.period-btn{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-sec);cursor:pointer;position:relative;font-family:inherit;border:none;background:none}
+.period-btn.active{background:var(--primary);color:#fff}
+.period-btn .discount{position:absolute;top:-8px;right:-4px;background:var(--success);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px}
+
+/* Plan cards */
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px}
+.plan-card{background:var(--card);border-radius:16px;padding:28px 24px;border:2px solid var(--border);position:relative;transition:.2s}
+.plan-card:hover{border-color:var(--primary);box-shadow:0 8px 30px rgba(79,106,246,.12)}
+.plan-card.popular{border-color:var(--primary)}
+.plan-card.popular::before{content:'Популярный';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:11px;font-weight:700;padding:3px 14px;border-radius:6px;white-space:nowrap}
+.plan-name{font-size:18px;font-weight:700;margin-bottom:4px}
+.plan-desc{font-size:13px;color:var(--text-sec);margin-bottom:16px;min-height:36px}
+.plan-price{margin-bottom:20px}
+.plan-price .amount{font-size:32px;font-weight:800;color:var(--text)}
+.plan-price .old-amount{font-size:16px;color:var(--text-muted);text-decoration:line-through;margin-right:8px}
+.plan-price .per{font-size:13px;color:var(--text-muted);font-weight:500}
+.plan-price .daily{font-size:12px;color:var(--text-sec);margin-top:2px}
+.plan-btn{width:100%;height:44px;border-radius:10px;border:none;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:20px;transition:.15s}
+.plan-btn.primary{background:var(--primary);color:#fff}
+.plan-btn.primary:hover{background:#3D58E0}
+.plan-btn.outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+.plan-btn.outline:hover{border-color:var(--primary);color:var(--primary)}
+.plan-btn.enterprise{background:linear-gradient(135deg,#1E293B,#334155);color:#fff}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px}
+.plan-features li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-sec)}
+.plan-features li svg{width:16px;height:16px;color:var(--success);flex-shrink:0;margin-top:1px}
+.plan-features li.disabled{color:var(--text-muted)}
+.plan-features li.disabled svg{color:var(--text-muted)}
+.plan-limit{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.plan-limit:last-child{border-bottom:none}
+.plan-limit .lbl{color:var(--text-sec)}
+.plan-limit .val{font-weight:600}
+
+/* Modules section */
+.modules-intro{font-size:14px;color:var(--text-sec);margin-bottom:20px}
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.module-card{background:var(--card);border-radius:12px;padding:20px;border:1px solid var(--border);transition:.2s;position:relative}
+.module-card:hover{border-color:var(--primary);box-shadow:0 4px 12px rgba(79,106,246,.08)}
+.module-card.selected{border-color:var(--primary);background:var(--primary-light)}
+.module-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.module-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.module-icon svg{width:18px;height:18px;color:#fff}
+.module-name{font-size:14px;font-weight:600}
+.module-desc{font-size:12px;color:var(--text-sec);margin-bottom:12px;min-height:32px}
+.module-price{font-size:18px;font-weight:700;color:var(--primary)}
+.module-price .per{font-size:12px;color:var(--text-muted);font-weight:500}
+.module-tag{position:absolute;top:12px;right:12px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px}
+.module-tag.ai{background:var(--violet-bg);color:var(--violet)}
+.module-tag.new{background:var(--success-bg);color:var(--success)}
+
+/* Volume discounts */
+.volume-table{width:100%;border-collapse:collapse;margin-top:12px}
+.volume-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:#FAFBFC}
+.volume-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border)}
+.volume-table tr:last-child td{border-bottom:none}
+.volume-table tr:hover td{background:#FAFBFC}
+.volume-discount{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success)}
+
+/* AI section */
+.ai-section{background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid #DDD6FE;border-radius:16px;padding:28px;margin-bottom:24px}
+.ai-section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ai-section-header .icon{width:44px;height:44px;background:linear-gradient(135deg,#7C3AED,#4F6AF6);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.ai-section-header .icon svg{width:22px;height:22px;color:#fff}
+.ai-section-header h3{font-size:18px;font-weight:700}
+.ai-section-header p{font-size:13px;color:var(--text-sec)}
+.ai-packages{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+.ai-pkg{background:#fff;border-radius:12px;padding:18px;border:1px solid #DDD6FE;text-align:center;transition:.15s}
+.ai-pkg:hover{border-color:var(--violet);box-shadow:0 4px 12px rgba(124,58,237,.1)}
+.ai-pkg.best{border-color:var(--violet);position:relative}
+.ai-pkg.best::after{content:'Выгодно';position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--violet);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.ai-pkg .requests{font-size:24px;font-weight:800;color:var(--violet)}
+.ai-pkg .req-label{font-size:11px;color:var(--text-muted);margin-bottom:8px}
+.ai-pkg .pkg-price{font-size:18px;font-weight:700;margin-bottom:2px}
+.ai-pkg .per-req{font-size:11px;color:var(--text-sec)}
+.ai-pkg .pkg-save{font-size:11px;color:var(--success);font-weight:600;margin-top:4px}
+
+/* Calculator */
+.calc-section{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:28px;margin-bottom:24px;box-shadow:var(--shadow)}
+.calc-grid{display:grid;grid-template-columns:1fr 340px;gap:32px}
+.calc-left h3{font-size:17px;font-weight:700;margin-bottom:16px}
+.calc-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.calc-row:last-child{border-bottom:none}
+.calc-row .calc-label{font-size:14px;display:flex;align-items:center;gap:8px}
+.calc-row .calc-label .included{font-size:11px;color:var(--success);font-weight:500}
+.calc-row .calc-value{font-size:14px;font-weight:600;display:flex;align-items:center;gap:4px}
+.calc-row .calc-value.free{color:var(--success)}
+
+/* Summary card */
+.calc-summary{background:linear-gradient(135deg,#F8FAFC,#F1F5F9);border-radius:14px;padding:24px;border:1px solid var(--border)}
+.calc-summary h4{font-size:14px;font-weight:600;color:var(--text-sec);margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px;font-size:11px}
+.summary-line{display:flex;justify-content:space-between;padding:8px 0;font-size:13px}
+.summary-line .s-label{color:var(--text-sec)}
+.summary-line .s-value{font-weight:600}
+.summary-line.discount .s-value{color:var(--success)}
+.summary-divider{height:1px;background:var(--border);margin:10px 0}
+.summary-total{display:flex;justify-content:space-between;padding:12px 0;font-size:18px;font-weight:700}
+.summary-total .total-amount{color:var(--primary)}
+.summary-per-day{text-align:right;font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.summary-btn{width:100%;height:48px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:.15s}
+.summary-btn:hover{background:#3D58E0}
+.summary-note{font-size:11px;color:var(--text-muted);text-align:center;margin-top:10px}
+
+/* Personas */
+.personas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:16px}
+.persona{border-radius:12px;padding:20px;border:1px solid var(--border);background:var(--card)}
+.persona-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.persona-avatar{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.persona-name{font-size:14px;font-weight:600}
+.persona-desc{font-size:12px;color:var(--text-sec)}
+.persona-items{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.persona-item{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--border)}
+.persona-item:last-child{border-bottom:none}
+.persona-item .p-label{color:var(--text-sec)}
+.persona-item .p-value{font-weight:600}
+.persona-total{display:flex;justify-content:space-between;padding:10px 14px;background:var(--primary-light);border-radius:8px;font-weight:700;font-size:14px;color:var(--primary)}
+
+/* Payment methods */
+.pay-methods{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}
+.pay-method{display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:13px;font-weight:500;min-width:180px}
+.pay-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table th{padding:12px 16px;font-size:12px;font-weight:600;text-align:center;border-bottom:2px solid var(--border);background:#FAFBFC}
+.compare-table th:first-child{text-align:left;width:240px}
+.compare-table td{padding:10px 16px;font-size:13px;text-align:center;border-bottom:1px solid var(--border)}
+.compare-table td:first-child{text-align:left;color:var(--text-sec);font-weight:500}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:#FAFBFC}
+.compare-table .check{color:var(--success);font-weight:700}
+.compare-table .cross{color:var(--text-muted)}
+.compare-table .highlight{background:var(--primary-light)}
+.compare-table th.highlight{background:var(--primary-light);color:var(--primary)}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:8px}
+.faq-item{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.faq-q{padding:14px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--card)}
+.faq-q svg{width:16px;height:16px;color:var(--text-muted);transform:rotate(0);transition:.2s;flex-shrink:0}
+.faq-item.open .faq-q svg{transform:rotate(180deg)}
+.faq-a{padding:0 18px 14px;font-size:13px;color:var(--text-sec);line-height:1.6;display:none}
+.faq-item.open .faq-a{display:block}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
+    <nav class="nav">
+      <div class="nav-section">Основное</div>
+      <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+      <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Заказы</span><span class="nav-badge">12</span></a>
+      <a href="product-create.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Создание карточки</span><span class="nav-badge ai">AI</span></a>
+      <a href="stock.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Остатки</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Аналитика</div>
+      <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Продажи</span></a>
+      <a href="product-analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><span>Товарная аналитика</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Операции</div>
+      <a href="accounting.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Бухгалтерия</span></a>
+      <a href="videos.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
+      <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
+      <a href="pricing.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Тарифы и оплата</h1>
+        <div style="font-size:13px;color:var(--text-sec);margin-top:4px">Выберите план и модули под ваш бизнес</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:12px;color:var(--text-muted)">Следующее списание: 14 марта 2026</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block"></span>
+        <span style="font-size:12px;color:var(--success);font-weight:600">Активна</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Current plan banner -->
+      <div class="current-plan">
+        <div class="current-plan-info">
+          <h2>Ваш тариф: Бизнес</h2>
+          <p>Подписка на 12 месяцев · 3 маркетплейса · 5 аккаунтов · 2 модуля</p>
+        </div>
+        <div class="current-plan-right">
+          <div class="current-plan-price">10 970 &#8381;</div>
+          <div class="current-plan-period">/ месяц</div>
+          <div class="current-plan-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Экономия 20% с годовым планом
+          </div>
+        </div>
+      </div>
+
+      <!-- Period toggle -->
+      <div class="period-toggle">
+        <div class="period-group">
+          <button class="period-btn">1 месяц</button>
+          <button class="period-btn">6 месяцев <span class="discount">-10%</span></button>
+          <button class="period-btn active">12 месяцев <span class="discount">-20%</span></button>
+        </div>
+      </div>
+
+      <!-- Plan cards -->
+      <div class="plans-grid">
+        <!-- Старт -->
+        <div class="plan-card">
+          <div class="plan-name">Старт</div>
+          <div class="plan-desc">Для начинающих селлеров с 1-2 площадками</div>
+          <div class="plan-price">
+            <span class="old-amount">2 990</span>
+            <span class="amount">2 390</span> <span class="per">&#8381;/мес</span>
+            <div class="daily">≈ 80 &#8381;/день</div>
+          </div>
+          <button class="plan-btn outline">Текущий план выше</button>
+          <div style="margin-bottom:16px">
+            <div class="plan-limit"><span class="lbl">Заказов / мес</span><span class="val">1 000</span></div>
+            <div class="plan-limit"><span class="lbl">SKU (товаров)</span><span class="val">500</span></div>
+            <div class="plan-limit"><span class="lbl">Маркетплейсов</span><span class="val">2</span></div>
+            <div class="plan-limit"><span class="lbl">AI-запросов</span><span class="val">100</span></div>
+            <div class="plan-limit"><span class="lbl">Хранилище</span><span class="val">5 ГБ</span></div>
+            <div class="plan-limit"><span class="lbl">Пользователей</span><span class="val">3</span></div>
+          </div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Управление заказами</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Складской учёт</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Карточки товаров</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Базовая аналитика</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Экспорт CSV</li>
+            <li class="disabled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Расширенная аналитика</li>
+            <li class="disabled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Приоритетная поддержка</li>
+          </ul>
+        </div>
+
+        <!-- Бизнес -->
+        <div class="plan-card popular">
+          <div class="plan-name">Бизнес</div>
+          <div class="plan-desc">Для среднего бизнеса с 3 площадками</div>
+          <div class="plan-price">
+            <span class="old-amount">5 990</span>
+            <span class="amount">4 790</span> <span class="per">&#8381;/мес</span>
+            <div class="daily">≈ 160 &#8381;/день</div>
+          </div>
+          <button class="plan-btn primary">Ваш текущий план</button>
+          <div style="margin-bottom:16px">
+            <div class="plan-limit"><span class="lbl">Заказов / мес</span><span class="val">10 000</span></div>
+            <div class="plan-limit"><span class="lbl">SKU (товаров)</span><span class="val">5 000</span></div>
+            <div class="plan-limit"><span class="lbl">Маркетплейсов</span><span class="val">3</span></div>
+            <div class="plan-limit"><span class="lbl">AI-запросов</span><span class="val">1 000</span></div>
+            <div class="plan-limit"><span class="lbl">Хранилище</span><span class="val">50 ГБ</span></div>
+            <div class="plan-limit"><span class="lbl">Пользователей</span><span class="val">10</span></div>
+          </div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Всё из «Старт»</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Расширенная аналитика</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Чат-поддержка (8ч SLA)</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Видеоархив запаковок</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Бухгалтерский модуль</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Интеграция 1С / МойСклад</li>
+            <li class="disabled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Приоритетная поддержка</li>
+          </ul>
+        </div>
+
+        <!-- Масштаб -->
+        <div class="plan-card">
+          <div class="plan-name">Масштаб</div>
+          <div class="plan-desc">Для крупных операций на всех площадках</div>
+          <div class="plan-price">
+            <span class="old-amount">14 990</span>
+            <span class="amount">11 990</span> <span class="per">&#8381;/мес</span>
+            <div class="daily">≈ 400 &#8381;/день</div>
+          </div>
+          <button class="plan-btn outline">Перейти на Масштаб</button>
+          <div style="margin-bottom:16px">
+            <div class="plan-limit"><span class="lbl">Заказов / мес</span><span class="val">100 000</span></div>
+            <div class="plan-limit"><span class="lbl">SKU (товаров)</span><span class="val">50 000</span></div>
+            <div class="plan-limit"><span class="lbl">Маркетплейсов</span><span class="val">5</span></div>
+            <div class="plan-limit"><span class="lbl">AI-запросов</span><span class="val">10 000</span></div>
+            <div class="plan-limit"><span class="lbl">Хранилище</span><span class="val">500 ГБ</span></div>
+            <div class="plan-limit"><span class="lbl">Пользователей</span><span class="val">50</span></div>
+          </div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Всё из «Бизнес»</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Приоритет (4ч SLA)</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Telegram-поддержка</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>ЭДО + ФНС интеграция</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>ML-прогнозирование</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Мультисклад</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>API-доступ</li>
+          </ul>
+        </div>
+
+        <!-- Энтерпрайз -->
+        <div class="plan-card">
+          <div class="plan-name">Энтерпрайз</div>
+          <div class="plan-desc">Индивидуальные условия и выделенный менеджер</div>
+          <div class="plan-price">
+            <span class="amount" style="font-size:24px">По договору</span>
+            <div class="daily">от 50 000 &#8381;/мес</div>
+          </div>
+          <button class="plan-btn enterprise">Связаться с нами</button>
+          <div style="margin-bottom:16px">
+            <div class="plan-limit"><span class="lbl">Заказов / мес</span><span class="val" style="color:var(--success)">Без лимита</span></div>
+            <div class="plan-limit"><span class="lbl">SKU (товаров)</span><span class="val" style="color:var(--success)">Без лимита</span></div>
+            <div class="plan-limit"><span class="lbl">Маркетплейсов</span><span class="val" style="color:var(--success)">Все</span></div>
+            <div class="plan-limit"><span class="lbl">AI-запросов</span><span class="val">По договору</span></div>
+            <div class="plan-limit"><span class="lbl">Хранилище</span><span class="val">По договору</span></div>
+            <div class="plan-limit"><span class="lbl">Пользователей</span><span class="val" style="color:var(--success)">Без лимита</span></div>
+          </div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Всё из «Масштаб»</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>SLA 1 час</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Выделенный менеджер</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>On-premise / VPC</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Custom интеграции</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>SSO / LDAP</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Обучение команды</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AI / Neural Networks (separate billing) -->
+      <div class="ai-section">
+        <div class="ai-section-header">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <h3>AI и нейросети — оплата по факту</h3>
+            <p>Работа с нейросетями оплачивается отдельно. Базовые запросы включены в тариф, дальше — пакеты или pay-as-you-go</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div style="background:#fff;border-radius:10px;padding:14px 18px;border:1px solid #DDD6FE">
+            <div style="font-size:12px;color:var(--text-sec);margin-bottom:4px">AI-создание карточек</div>
+            <div style="font-size:14px;font-weight:600">Распознавание фото, генерация описаний, авто-публикация</div>
+            <div style="font-size:13px;color:var(--violet);font-weight:700;margin-top:6px">от 15 &#8381; / карточка</div>
+          </div>
+          <div style="background:#fff;border-radius:10px;padding:14px 18px;border:1px solid #DDD6FE">
+            <div style="font-size:12px;color:var(--text-sec);margin-bottom:4px">AI-ответы в поддержке</div>
+            <div style="font-size:14px;font-weight:600">Автоматические ответы покупателям, анализ обращений</div>
+            <div style="font-size:13px;color:var(--violet);font-weight:700;margin-top:6px">от 5 &#8381; / ответ</div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--violet);margin-bottom:10px">Пакеты AI-запросов (предоплата со скидкой)</div>
+        <div class="ai-packages">
+          <div class="ai-pkg">
+            <div class="requests">500</div>
+            <div class="req-label">запросов</div>
+            <div class="pkg-price">3 990 &#8381;</div>
+            <div class="per-req">7.98 &#8381; / запрос</div>
+          </div>
+          <div class="ai-pkg">
+            <div class="requests">2 000</div>
+            <div class="req-label">запросов</div>
+            <div class="pkg-price">11 990 &#8381;</div>
+            <div class="per-req">5.99 &#8381; / запрос</div>
+            <div class="pkg-save">Экономия 25%</div>
+          </div>
+          <div class="ai-pkg best">
+            <div class="requests">5 000</div>
+            <div class="req-label">запросов</div>
+            <div class="pkg-price">24 990 &#8381;</div>
+            <div class="per-req">4.99 &#8381; / запрос</div>
+            <div class="pkg-save">Экономия 37%</div>
+          </div>
+          <div class="ai-pkg">
+            <div class="requests">15 000</div>
+            <div class="req-label">запросов</div>
+            <div class="pkg-price">59 990 &#8381;</div>
+            <div class="per-req">3.99 &#8381; / запрос</div>
+            <div class="pkg-save">Экономия 50%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add-on modules -->
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Дополнительные модули
+        </div>
+        <div class="modules-intro">Подключайте только нужные модули. Чем больше модулей — тем ниже стоимость каждого (от 3 модулей скидка 10%, от 5 — скидка 15%)</div>
+        <div class="modules-grid">
+          <div class="module-card selected">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#7C3AED,#4F6AF6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg></div>
+              <div class="module-name">AI-ответы</div>
+            </div>
+            <span class="module-tag ai">AI</span>
+            <div class="module-desc">Автоматические ответы на обращения покупателей</div>
+            <div class="module-price">2 990 <span class="per">&#8381;/мес</span></div>
+          </div>
+          <div class="module-card selected">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#F59E0B,#F97316)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+              <div class="module-name">Автоцены</div>
+            </div>
+            <div class="module-desc">Динамическое ценообразование по конкурентам и спросу</div>
+            <div class="module-price">4 500 <span class="per">&#8381;/мес</span></div>
+          </div>
+          <div class="module-card">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#22C55E,#16A34A)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="module-name">ML-прогнозы</div>
+            </div>
+            <span class="module-tag ai">AI</span>
+            <div class="module-desc">Прогноз спроса, закупок и оптимального ассортимента</div>
+            <div class="module-price">5 990 <span class="per">&#8381;/мес</span></div>
+          </div>
+          <div class="module-card">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="module-name">Мониторинг</div>
+            </div>
+            <div class="module-desc">Отслеживание конкурентов, цен и позиций в выдаче</div>
+            <div class="module-price">15 000 <span class="per">&#8381;/мес</span></div>
+          </div>
+          <div class="module-card">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#EF4444,#DC2626)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="module-name">ЭДО + ФНС</div>
+            </div>
+            <div class="module-desc">Электронный документооборот и интеграция с налоговой</div>
+            <div class="module-price">3 490 <span class="per">&#8381;/мес</span></div>
+          </div>
+          <div class="module-card">
+            <div class="module-header">
+              <div class="module-icon" style="background:linear-gradient(135deg,#8B5CF6,#6D28D9)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+              <div class="module-name">Доп. аккаунт МП</div>
+            </div>
+            <span class="module-tag new">NEW</span>
+            <div class="module-desc">Дополнительный аккаунт маркетплейса (FBY/FBS/юрлицо)</div>
+            <div class="module-price">990 <span class="per">&#8381;/мес за шт.</span></div>
+          </div>
+        </div>
+        <!-- Volume discount table -->
+        <div style="background:var(--success-bg);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <span style="font-size:13px;font-weight:600;color:#166534">У вас подключено 2 модуля.</span>
+            <span style="font-size:13px;color:#166534"> Подключите ещё 1 и получите скидку 10% на все модули!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculator / Summary -->
+      <div class="calc-section">
+        <div class="calc-grid">
+          <div class="calc-left">
+            <h3>Ваша конфигурация</h3>
+            <div class="calc-row">
+              <span class="calc-label">Тариф «Бизнес» <span class="included">(годовой, -20%)</span></span>
+              <span class="calc-value">4 790 &#8381;</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Модуль «AI-ответы»</span>
+              <span class="calc-value">2 990 &#8381;</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Модуль «Автоцены» (500 SKU)</span>
+              <span class="calc-value">4 500 &#8381;</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Доп. аккаунты (×2)</span>
+              <span class="calc-value">1 980 &#8381;</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Пакет AI (2000 запросов)</span>
+              <span class="calc-value">11 990 &#8381; <span style="font-size:11px;color:var(--text-muted);font-weight:400">разовый</span></span>
+            </div>
+          </div>
+          <div class="calc-summary">
+            <h4>Итого к оплате</h4>
+            <div class="summary-line"><span class="s-label">Базовый тариф</span><span class="s-value">5 990 &#8381;</span></div>
+            <div class="summary-line"><span class="s-label">Скидка за год (-20%)</span><span class="s-value" style="color:var(--success)">-1 200 &#8381;</span></div>
+            <div class="summary-line"><span class="s-label">Модули (×2)</span><span class="s-value">7 490 &#8381;</span></div>
+            <div class="summary-line"><span class="s-label">Доп. аккаунты (×2)</span><span class="s-value">1 980 &#8381;</span></div>
+            <div class="summary-divider"></div>
+            <div class="summary-line"><span class="s-label">Ежемесячно</span><span class="s-value" style="font-size:15px;color:var(--primary)">13 260 &#8381;</span></div>
+            <div class="summary-divider"></div>
+            <div class="summary-total"><span>К оплате за год</span><span class="total-amount">159 120 &#8381;</span></div>
+            <div class="summary-per-day">≈ 436 &#8381;/день · ≈ 13 260 &#8381;/мес</div>
+            <button class="summary-btn">Оплатить 159 120 &#8381;</button>
+            <div class="summary-note">Пакет AI-запросов (11 990 &#8381;) оплачивается отдельно разово</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer personas -->
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Примеры: сколько платят наши клиенты
+        </div>
+        <div class="personas-grid">
+          <div class="persona">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background:var(--success-bg)">🌱</div>
+              <div><div class="persona-name">Начинающий селлер</div><div class="persona-desc">1 площадка, 200 SKU</div></div>
+            </div>
+            <div class="persona-items">
+              <div class="persona-item"><span class="p-label">Тариф «Старт»</span><span class="p-value">2 990 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">1 маркетплейс</span><span class="p-value">вкл. в тариф</span></div>
+              <div class="persona-item"><span class="p-label">AI-запросы (100)</span><span class="p-value">вкл. в тариф</span></div>
+            </div>
+            <div class="persona-total"><span>Итого</span><span>2 990 &#8381;/мес</span></div>
+          </div>
+          <div class="persona">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background:var(--primary-light)">📦</div>
+              <div><div class="persona-name">Средний селлер</div><div class="persona-desc">3 площадки, 500 SKU, AI</div></div>
+            </div>
+            <div class="persona-items">
+              <div class="persona-item"><span class="p-label">Тариф «Бизнес» (год)</span><span class="p-value">4 790 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">AI-ответы</span><span class="p-value">2 990 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">Автоцены (500 SKU)</span><span class="p-value">4 500 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">Доп. аккаунты ×2</span><span class="p-value">1 980 &#8381;</span></div>
+            </div>
+            <div class="persona-total"><span>Итого</span><span>14 260 &#8381;/мес</span></div>
+          </div>
+          <div class="persona">
+            <div class="persona-header">
+              <div class="persona-avatar" style="background:var(--violet-bg)">🏭</div>
+              <div><div class="persona-name">Крупный селлер</div><div class="persona-desc">5 площадок, 3000 SKU, все AI</div></div>
+            </div>
+            <div class="persona-items">
+              <div class="persona-item"><span class="p-label">Тариф «Масштаб» (год)</span><span class="p-value">11 990 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">Мониторинг</span><span class="p-value">15 000 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">ML-прогнозы + Автоцены</span><span class="p-value">10 490 &#8381;</span></div>
+              <div class="persona-item"><span class="p-label">AI-пакет 5000</span><span class="p-value">24 990 &#8381;*</span></div>
+              <div class="persona-item"><span class="p-label">ЭДО + доп. аккаунты ×5</span><span class="p-value">8 440 &#8381;</span></div>
+            </div>
+            <div class="persona-total"><span>Итого</span><span>~45 920 &#8381;/мес</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment methods -->
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Способы оплаты
+        </div>
+        <div class="pay-methods">
+          <div class="pay-method"><div class="pay-icon" style="background:#5B2EFF">ЮK</div><div><div style="font-weight:600">ЮKassa</div><div style="font-size:11px;color:var(--text-muted)">Карты, кошельки</div></div></div>
+          <div class="pay-method"><div class="pay-icon" style="background:#FFDD2D;color:#333">T</div><div><div style="font-weight:600">Tinkoff Pay</div><div style="font-size:11px;color:var(--text-muted)">Мгновенная оплата</div></div></div>
+          <div class="pay-method"><div class="pay-icon" style="background:#0077FF">СБ</div><div><div style="font-weight:600">СБП</div><div style="font-size:11px;color:var(--text-muted)">Через QR-код</div></div></div>
+          <div class="pay-method"><div class="pay-icon" style="background:#1E293B">Б/Н</div><div><div style="font-weight:600">Расчётный счёт</div><div style="font-size:11px;color:var(--text-muted)">Для юрлиц</div></div></div>
+          <div class="pay-method"><div class="pay-icon" style="background:#35D058">CP</div><div><div style="font-weight:600">CloudPayments</div><div style="font-size:11px;color:var(--text-muted)">Рекуррент</div></div></div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:16px;font-size:12px;color:var(--text-muted)">
+          <span>🔒 Платежи защищены PCI DSS</span>
+          <span>📄 Автоматические счета и акты</span>
+          <span>♻️ Автопродление с напоминанием за 7 дней</span>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Частые вопросы об оплате
+        </div>
+        <div class="faq-list">
+          <div class="faq-item open">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Есть ли бесплатный период? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            <div class="faq-a">Мы предоставляем 14-дневный пробный период с функционалом тарифа «Старт». Бесплатного тарифа нет — даже в пробном периоде вы получаете полноценный продукт с реальными данными. После окончания пробного периода необходимо выбрать тариф для продолжения работы.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Что происходит при превышении лимитов? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            <div class="faq-a">Мы используем мягкие лимиты. При 80% — предупреждение. При 100% — замедление синхронизации (раз в 30 минут вместо 5). При 120% — блокировка создания новых сущностей, но все данные остаются доступны. Никакие данные не удаляются.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Можно ли сменить тариф в середине периода? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            <div class="faq-a">Да. При переходе на более высокий тариф остаток средств пересчитывается пропорционально и учитывается в новой оплате. При понижении — разница зачисляется на баланс и используется для следующих платежей.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Как работает оплата AI-запросов? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            <div class="faq-a">В каждый тариф включено базовое количество AI-запросов. Сверх лимита вы можете купить предоплаченный пакет (от 500 до 15 000 запросов) со скидкой до 50%, либо подключить pay-as-you-go по 8 &#8381;/запрос. Неиспользованные запросы из пакетов сгорают через 12 месяцев.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Есть ли скидки за объём модулей? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            <div class="faq-a">Да! От 3 подключённых модулей — скидка 10% на все модули. От 5 модулей — скидка 15%. Годовая подписка даёт дополнительные 20% скидки на базовый тариф. Скидки суммируются: годовой план + 5 модулей = до 35% экономии.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
+</body>
+</html>

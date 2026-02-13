@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SellerHub — Видеоархив</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F2F5;--card:#fff;--primary:#4F6AF6;--primary-light:#EEF2FF;
+  --text:#1E293B;--text-sec:#64748B;--text-muted:#94A3B8;--border:#E2E8F0;
+  --ozon:#005BFF;--ozon-bg:#EBF3FF;--wb:#CB11AB;--wb-bg:#FCE7F6;
+  --ym:#FC3F1D;--ym-bg:#FFF1EE;--success:#22C55E;--success-bg:#F0FDF4;
+  --warning:#F59E0B;--warning-bg:#FFFBEB;--danger:#EF4444;--danger-bg:#FEF2F2;
+  --r:12px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.layout{display:flex;min-height:100vh}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px;padding:0 12px;margin-bottom:32px;font-weight:700;font-size:18px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#4F6AF6,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--text-sec);text-decoration:none;font-size:14px;font-weight:500;transition:.15s}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--primary-light);color:var(--primary)}
+.nav-item svg{width:20px;height:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
+.nav-badge.red{background:var(--danger);color:#fff}
+.nav-badge.ai{background:linear-gradient(135deg,#7C3AED,#4F6AF6);color:#fff;font-size:10px}
+.nav-divider{height:1px;background:var(--border);margin:8px 12px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 12px 4px;font-weight:600}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px}
+.user-block{display:flex;align-items:center;gap:12px;padding:8px 12px}
+.user-avatar{width:36px;height:36px;background:linear-gradient(135deg,#a78bfa,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+.user-info .name{font-size:14px;font-weight:600}
+.user-info .role{font-size:12px;color:var(--text-muted)}
+.main{margin-left:260px;flex:1}
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:var(--card);border-bottom:1px solid var(--border)}
+.header h1{font-size:22px;font-weight:700}
+.content{padding:32px}
+.btn{height:36px;padding:0 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-sec)}
+.btn-primary{background:var(--primary);color:#fff}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600}
+.b-ozon{background:var(--ozon-bg);color:var(--ozon)} .b-wb{background:var(--wb-bg);color:var(--wb)} .b-ym{background:var(--ym-bg);color:var(--ym)}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:16px 20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-card .label{font-size:12px;color:var(--text-sec);margin-bottom:4px}
+.stat-card .val{font-size:20px;font-weight:700}
+.stat-card .sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* Filters */
+.filters{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
+select,.search-input{height:36px;padding:0 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);outline:none}
+.search-input{width:240px;padding-left:36px}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);width:16px;height:16px}
+
+/* Video grid */
+.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.video-card{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);transition:.2s}
+.video-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-2px)}
+.video-thumb{position:relative;aspect-ratio:16/9;background:#0F172A;display:flex;align-items:center;justify-content:center}
+.video-thumb .play{width:48px;height:48px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.video-thumb .play svg{color:#fff;margin-left:3px}
+.video-thumb .duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:500;padding:2px 6px;border-radius:4px}
+.video-thumb .mp-tag{position:absolute;top:8px;left:8px}
+.video-thumb .cloud-tag{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border-radius:5px;padding:2px 6px;font-size:10px;font-weight:600;display:flex;align-items:center;gap:3px}
+.video-thumb .cloud-tag.uploaded{color:var(--success)}
+.video-thumb .cloud-tag.pending{color:var(--text-muted)}
+.video-body{padding:14px 16px}
+.video-body .order-id{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:2px}
+.video-body .product-name{font-size:13px;color:var(--text);margin-bottom:6px}
+.video-body .meta{display:flex;gap:8px;font-size:11px;color:var(--text-muted);flex-wrap:wrap}
+.video-body .meta span{display:flex;align-items:center;gap:3px}
+.video-actions{display:flex;gap:6px;padding:0 16px 14px;flex-wrap:wrap}
+.va-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text-sec);display:flex;align-items:center;gap:4px;transition:.15s}
+.va-btn:hover{background:var(--bg);border-color:var(--text-muted)}
+.va-btn.primary{background:var(--primary-light);border-color:transparent;color:var(--primary)}
+.va-btn svg{width:12px;height:12px}
+
+/* Bulk actions bar */
+.bulk-bar{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--primary-light);border-radius:10px;margin-bottom:20px;font-size:13px;color:var(--primary)}
+.bulk-bar strong{font-weight:700}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">S</div><span>SellerHub</span></div>
+    <nav class="nav">
+      <div class="nav-section">Основное</div>
+      <a href="index.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Главная</span></a>
+      <a href="orders.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Заказы</span><span class="nav-badge">12</span></a>
+      <a href="product-create.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Создание карточки</span><span class="nav-badge ai">AI</span></a>
+      <a href="stock.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Остатки</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Аналитика</div>
+      <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Продажи</span></a>
+      <a href="product-analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><span>Товарная аналитика</span></a>
+      <div class="nav-divider"></div>
+      <div class="nav-section">Операции</div>
+      <a href="accounting.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Бухгалтерия</span></a>
+      <a href="videos.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Видеоархив</span></a>
+      <a href="chats.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg><span>Чаты</span><span class="nav-badge">3</span></a>
+      <a href="pricing.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Тарифы</span></a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-block"><div class="user-avatar">АМ</div><div class="user-info"><div class="name">Алексей М.</div><div class="role">Администратор</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Видеоархив упаковок</h1>
+        <div style="font-size:13px;color:var(--text-sec);margin-top:4px">Записи упаковки заказов · Облачное хранилище · Быстрый доступ для поддержки</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Загрузить все в облако
+        </button>
+        <button class="btn btn-outline">Настройки камер</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="label">Всего записей</div>
+          <div class="val">4 128</div>
+          <div class="sub">за всё время</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Сегодня</div>
+          <div class="val">47</div>
+          <div class="sub">записей упаковки</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">В облаке</div>
+          <div class="val">3 842</div>
+          <div class="sub">Yandex Cloud S3 · 128 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Использовано в спорах</div>
+          <div class="val">23</div>
+          <div class="sub">из них 21 выиграно</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" placeholder="Поиск по номеру заказа, товару...">
+        </div>
+        <select>
+          <option>Все маркетплейсы</option>
+          <option>Ozon</option>
+          <option>Wildberries</option>
+          <option>Yandex Market</option>
+        </select>
+        <select>
+          <option>Сегодня</option>
+          <option>Вчера</option>
+          <option>Последние 7 дней</option>
+          <option>Этот месяц</option>
+        </select>
+        <select>
+          <option>Все камеры</option>
+          <option>Упаковка-1</option>
+          <option>Упаковка-2</option>
+          <option>Упаковка-3</option>
+        </select>
+        <select>
+          <option>Все статусы</option>
+          <option>В облаке</option>
+          <option>Только локально</option>
+        </select>
+      </div>
+
+      <!-- Video grid -->
+      <div class="video-grid">
+        <!-- Card 1 -->
+        <div class="video-card">
+          <div class="video-thumb">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">02:10</div>
+            <div class="mp-tag"><span class="badge b-ym">Yandex Market</span></div>
+            <div class="cloud-tag uploaded">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              В облаке
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="order-id">#YM-384920</div>
+            <div class="product-name">Смартфон Xiaomi Redmi Note 13 Pro + Чехол</div>
+            <div class="meta">
+              <span>13 фев 2026, 08:42</span>
+              <span>·</span>
+              <span>Камера: Упаковка-3</span>
+              <span>·</span>
+              <span>Дмитрий К.</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Ссылка
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7"/></svg>
+              В чат
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="video-card">
+          <div class="video-thumb">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">01:45</div>
+            <div class="mp-tag"><span class="badge b-ozon">Ozon</span></div>
+            <div class="cloud-tag uploaded">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              В облаке
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="order-id">#OZ-284731</div>
+            <div class="product-name">Кроссовки Nike Air Max 90</div>
+            <div class="meta">
+              <span>13 фев 2026, 10:15</span>
+              <span>·</span>
+              <span>Камера: Упаковка-1</span>
+              <span>·</span>
+              <span>Алексей М.</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Ссылка
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7"/></svg>
+              В чат
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="video-card">
+          <div class="video-thumb">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">01:58</div>
+            <div class="mp-tag"><span class="badge b-wb">Wildberries</span></div>
+            <div class="cloud-tag uploaded">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              В облаке
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="order-id">#WB-192847</div>
+            <div class="product-name">Платье летнее цветочное</div>
+            <div class="meta">
+              <span>13 фев 2026, 09:30</span>
+              <span>·</span>
+              <span>Камера: Упаковка-2</span>
+              <span>·</span>
+              <span>Елена С.</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Ссылка
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7"/></svg>
+              В чат
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="video-card">
+          <div class="video-thumb">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">02:35</div>
+            <div class="mp-tag"><span class="badge b-ozon">Ozon</span></div>
+            <div class="cloud-tag pending">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Загрузка...
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="order-id">#OZ-284730</div>
+            <div class="product-name">Набор кастрюль Tefal Comfort</div>
+            <div class="meta">
+              <span>13 фев 2026, 08:33</span>
+              <span>·</span>
+              <span>Камера: Упаковка-1</span>
+              <span>·</span>
+              <span>Дмитрий К.</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn" style="opacity:.5" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Загружается...
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7"/></svg>
+              В чат
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="video-card">
+          <div class="video-thumb">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">01:12</div>
+            <div class="mp-tag"><span class="badge b-ym">Yandex Market</span></div>
+            <div class="cloud-tag uploaded">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              В облаке
+            </div>
+          </div>
+          <div class="video-body">
+            <div class="order-id">#YM-384919</div>
+            <div class="product-name">Bluetooth-колонка JBL Go 3 × 2 шт</div>
+            <div class="meta">
+              <span>12 фев 2026, 19:48</span>
+              <span>·</span>
+              <span>Камера: Упаковка-2</span>
+              <span>·</span>
+              <span>Елена С.</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Ссылка
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7"/></svg>
+              В чат
+            </button>
+            <button class="va-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="video-card">
+          <div class="video-thumb" style="background:linear-gradient(135deg,#1E293B,#334155)">
+            <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg></div>
+            <div class="duration">03:22</div>
+            <div class="mp-tag"><span class="badge b-wb">Wildberries</span></div>
+            <div class="cloud-tag uploaded">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              В облаке
+            </div>
+          </div>
+          <div class="video-body">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="order-id">#WB-192845</div>
+              <span style="font-size:10px;padding:1px 6px;background:var(--danger-bg);color:var(--danger);border-radius:4px;font-weight:600">Спор</span>
+            </div>
+            <div class="product-name">Куртка зимняя Columbia</div>
+            <div class="meta">
+              <span>12 фев 2026, 15:30</span>
+              <span>·</span>
+              <span>Камера: Упаковка-1</span>
+              <span>·</span>
+              <span>Отправлено в спор ✓</span>
+            </div>
+          </div>
+          <div class="video-actions">
+            <button class="va-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              Ссылка
+            </button>
+            <button class="va-btn" style="background:var(--danger-bg);border-color:transparent;color:var(--danger)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+              Прикреплено к спору
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
